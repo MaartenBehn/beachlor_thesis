@@ -25,7 +25,7 @@ Das Template besteht aus zwei Graphen.
 
 $"Template" := (G_"val", G_"dep")$
 
-$G_"val" := (V_"val", E_"val")$ ist ein Graph der die zu generierende Welt als Mathematische Formel beschreibt. 
+$G_"val"$ ist ein Graph der die zu generierende Welt als Mathematische Formel beschreibt. 
 Es gilt folgende Datentypen: 
 - Zahlen 
 - Positionen 
@@ -39,20 +39,18 @@ Für Positions Mengen habe ich Gitter und pseudo zufällige Verteilung implement
 Datentypen sind meist durch andere Datentypen definiert z.B. 
 ist eine 3D Position durch 3 Zahlen definiert. 
 
-Ein $v_"val" in V_"val"$ hat folgende Eigenschaften: 
+Ein $v in V(G_"val")$ hat folgende Eigenschaften: 
 
-$delta^-(v_"val") := "Werte die für die Errechnung genutzt werden."$
+$N^-_G_"val" (v) := "Werte die für die Errechnung genutzt werden."$
 
-$delta^+(v_"val") := "Werte indem es für die Errechnung genutzt wird."$
-
-Daher spannt ein 
-
-#todo("In related Work zeigen dass es ok ist ein Graph so zu deffienieren");
+$N^+_G_"val" (v) := "Werte indem es für die Errechnung genutzt wird."$
 
 
-Der zweite Bestandteil des Templates ist der Abhängigkeits-Graph $G_"dep" := (V_"dep", E_"dep")$. 
 
-Einer Untermenge der Werte $v_"val" in V_"val"$ ist ein Knoten $v_"dep" in V_"dep"$ zugeordnet, beschrieben durch die Funktion $"val"(v_"dep")$.
+Der zweite Bestandteil des Templates ist der Abhängigkeits-Graph $G_"dep"$. 
+
+Einer Untermenge der Werte $v_"val" in V(G_"val")$ ist ein Knoten $v_"dep" in V(G_"dep")$ zugeordnet, beschrieben durch die Funktion 
+$"val"(v_"dep")$.
 
 Bei der generation Welt wird nicht nur das finale Ergebnisse sondern auch die Werte der $v_"dep"$ gespeichert.
 So kann bei einer Regeländerung weithin valide Werte wiederverwendet werden.
@@ -62,7 +60,7 @@ Bei der Entscheidung wie vielen Werten ein $v_"dep"$ zu geordnet wird muss zwisc
 
 Im meiner Implementierung speichere ich alle Positions Mengen Werte zwischen. 
 
-Die Knoten im Abhängigkeits-Graph speichern von welchen andern Knoten sie abhängen $delta^-(v_"dep")$,
+Die Knoten im Abhängigkeits-Graph speichern von welchen andern Knoten sie abhängen $N^-_G_"dep" (v)$,
 also alle Knoten in $G_"dep"$ dessen Werte zur Errechnung genutzt werden.
 
 #todo("Wie sage ich das es nur die nächsten sind?")
@@ -80,17 +78,15 @@ Der Collapser führt die Aufträge der Queue iterativ aus bis es keine Aufträge
 
 $"Collapser" := (G_"col", Q)$
 
-$G_"col" := (V_"col", E_"col")$
+Ein $v in V(G_"col")$ hat folgende Eigenschaften: 
 
-Ein $v_"col" in V_"col"$ hat folgende Eigenschaften: 
+$N^-_G_"col" (v) := "Collapser Knoten die zur Errechnung benötigt werden."$
 
-$delta^-(v_"col") := "Collapser Knoten die zur Errechnung benötigt werden."$
+$t(v) := "Der Template Knoten der dem Collapser Knoten entspricht."$
 
-$t(v_"col") := "Der Template Knoten der dem Collapser Knoten entspricht."$
+$"created"(v) := "Der Knoten der diesen Knoten erzeugt hat."$
 
-$"created"(v_"col") := "Der Knoten der diesen Knoten erzeugt hat."$
-
-$forall v_i in delta^-(v_"col") quad "data"(v_"col", v_i) := "Der Wert des ahängigen Knoten der diesem Knoten zu geordnet ist."$
+$v_i in N^-_G_"col" (v) quad "data"(v, v_i) := "Der Wert des ahängigen Knoten der diesem Knoten zu geordnet ist."$
 
 
 $Q$ ist die Queue in Aufträgen 
@@ -142,12 +138,12 @@ Um trotzdem eine valide Lösung errechnen zu können muss es für jeden Knoten $
 
 So kann der Abhängigkeits Graph iterativ gelöst werden. 
 Dazu werden pro Kreis im Abhängigkeits-Graph eine Kante als durchgeschnitten markiert 
-$delta^+_"cut" (v_"dep") subset.eq delta^+(v_"dep")$.
+$N^+_"cut" (v) subset.eq N^+_G_"dep" (v) quad v in V(G_"dep")$.
 Der Abhängigkeits-Graph ohne die durch geschnittenen Kanten 
-$delta^+_"not cut" (v_"dep") := delta^+(v_"dep") without delta^+_"cut" (v_"dep")$ ist ein DAG. 
-Also kann jedem Knoten ein Level $l(v_"dep")$ zu geordnet werden. 
+$N^+_"not cut" (v) := N^+_G_"dep" (v) without N^+_"cut" (v)$ ist ein DAG. 
+Also kann jedem Knoten ein Level $l(v)$ zu geordnet werden. 
 $
-  l(v_"dep") > l(v_i) quad forall v_i in delta^+_"cut not" (v_"dep")
+  l(v) > l(v_i) quad forall v_i in N^+_"not cut" (v)
 $
 
 Die Knoten werden Level nach Level erzeugt und so sichergestellt das alle nicht geschnittenen Abhängigkeiten schon errechnet worden sind, wenn der Knoten selbst errechnet wird. 

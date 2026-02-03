@@ -7,14 +7,17 @@
 Alle Graphen sind mit stabilen Listen implementiert.
 
 Eine stabile Listen ist eine sich automatisch vergrößerndes Array. 
-Wenn dass aktuelle Array voll ist wird ein größeres Array alloziert und die werte mit einer memcopy operation rüber kopiert.
+Wenn dass aktuelle Array voll ist wird ein größeres Array alloziert und die werte mit einer memcopy Operation rüber kopiert.
 Dazu änderen sich die Indexe von Elementen in stabilen Listen nicht.
-Wenn ein Element entfernt wird, werden nicht die weiteren aufgeschoben um die Lücke zu schließen sondern in der Lücke wird der Index des nächsten besetzten Element notiert. 
-Dazu wird pro Element eine Versionsnummer gespeichert. Die oberen 32 bit des Index entsprechend dieser Version. 
+Wenn ein Element entfernt wird, werden die weiteren Elemente nicht aufgeschoben um die Lücke zu schließen sondern in der Lücke wird der Index des nächsten besetzten Element notiert. 
+Dazu wird pro Element eine Versionsnummer gespeichert. 
+//Die oberen 32 bit des Index entsprechend dieser Version. 
 Bei einem Zugriff wird die Version des Index mit der Version des Elements an der Stelle des Index verglichen. 
 So bleiben Indexe valide solange das Element in der Liste ist und es wird erkannt wenn man mit veralteten Indexen zugreift. 
 
-Stabiele Listen erlauben Graphen effizient als Listen darzustellen, indem in den Knoten die Indexe der anderen Knoten gespeichert werden zu den Kanten existieren. Stabiele listen sind dabei wesentlich schneller als HashMaps. 
+Stabiele Listen erlauben Graphen effizient als Listen darzustellen, indem in den Knoten die Indexe der anderen Knoten gespeichert werden zu den Kanten existieren. Stabiele listen sind dabei wesentlich schneller als HashMaps.
+
+#todo("Quelle")
 
 Mit der Versionierung der Indexe können invalide Kanten sicher erkannt werden. 
 

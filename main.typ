@@ -40,6 +40,8 @@
 
 #include "./theory/lazy_loading.typ"
 
+#include "./theory/graphs.typ"
+
 - Graph grammers
 - Rust features
 - Stabiele Listen
