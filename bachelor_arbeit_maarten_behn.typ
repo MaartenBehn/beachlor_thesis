@@ -37,6 +37,7 @@ wenn nur diejenigen Teile der Welt neu berechnet werden, die durch Änderungen a
 Dafür wird ein System vorgestellt, welches einen Generationsalgorithmus als Abhängigkeits-Graph darstellt. 
 Dieses verwendet Zwischenergebnisse für diejenigen Teile des Graphen, die sich nicht geändert haben, wieder.
 
+
 #outline(depth: 2)
 
 = Stand der Technik
