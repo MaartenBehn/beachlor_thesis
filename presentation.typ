@@ -47,9 +47,11 @@
 #title-slide()
 
 
-= Problemstellung
-
 = Kern Idee
+
+#figure(
+  image("assets/minecraft.jpg", width: 80%),
+)
 
 #speaker-note[
 - Angenommen es gibt eine prozedurale Welt 
@@ -69,20 +71,56 @@ Bild von Minecraft
 die nicht mehr valide sind. 
 ]
 
+= Related Work
+
 = Was ich gebaut habe 
+
+- Bild vom Programm mit Bestanteilen erklärt
 
 #speaker-note[
 - Kurzes Video 
   - Zeigt wie man im Editor eine Welt erstellt und sich diese live im Renderer angezeigt wird.
 ]
 
-= Bestandteile 
+
+#v(2cm)
+
+#figure(
+  image("assets/overview_diagramm.svg", width: 100%),
+)
 
 #speaker-note[
 - Editor, Template, Generator
 ]
 
-= Struktur des Templates 
+#speaker-note[
+- Bild der beiden Graphen 
+
+- Einer der den Algorithmus darstellt 
+- Eine Kante zu jedem Wert den es als Input nutzt (abhängt)
+
+- Und einer der nur ein Knoten pro gecachten Knoten in dem Algorithmus enthält. 
+] 
+
+== Cache Graph
+
+#figure(
+  image("assets/cache_graph_2.svg", width: 90%),
+)
+
+== Templates vergleichen
+
+#figure(
+  image("assets/template_changed.svg", width: 75%),
+)
+
+== Abhängigkeits-Werte finden 
+
+#v(1cm)
+
+#figure(
+  image("assets/relative_schritte.svg", width: 100%),
+) 
 
 == Graphen im Speicher Darstellen 
 
@@ -162,38 +200,121 @@ let values: Vec<TemplateValue>
 - Gute cache Lokalität gegen heap Alloctions und pointer
 ]
 
-= Das Template besteht aus zwei Graphen 
+== Template bauen
 
-#speaker-note[
-- Bild der beiden Graphen 
+```rust
+fn make_position(child_node: &EditorNode, 
+                 in_index: usize) -> PosIndex {
 
-- Einer der den Algorithmus darstellt 
-- Eine Kante zu jedem Wert den es als Input nutzt (abhängt)
+let node = child_node.inputs[in_index];
+let value = match &node.data_type {
+  EditorNodeType::Add => {
+    let a = make_position(node, 0, ...);
+    let b = make_position(node, 1, ...);
+    
+    TemplateValue::Position(PositionValue::Add((a, b)))
+  }, 
+  EditorNodeType::Sub => ...
+}
 
-- Und einer der nur ein Knoten pro gecachten Knoten in dem Algorithmus enthält. 
-] 
 
-== Cache Graph
+```
 
-#figure(
-  image("assets/cache_graph_2.svg", width: 90%),
-)
-
-== Templates vergleichen 
-
-== Template auf alte Welt anwenden 
-
-== Abhängigkeits-Werte finden 
+== Template errechnen
 
 #v(1cm)
+```rust
+fn calc_position(index: PosIndex) -> SmallVec<Vec3> {
+  
+  match values[index] {
+    PositionValue::Add((a_index, b_index)) => {
+      let a = calc_position(a_index);
+      let b = calc_position(b_index);
 
-#figure(
-  image("assets/relative_schritte.svg", width: 100%),
-) 
+      return a.cartesian_product(b)
+               .map(|(a_v, b_v)| a_v + b_v);
+    },
+    PositionValue::Sub => ...
+}
+```
 
-= Ausgabe Datenstruktur
+== Neuberechnungszeit
 
-= Neuberechnungszeit
+#let place_marker(dx: relative, dy: relative, body) = place(alignment.top, dy: dy, dx: dx, 
+  circle(
+    {set align(center + horizon); body},
+    fill: white, 
+    stroke: black, 
+    inset: 1pt,
+  )
+)
+
+#lq.diagram(
+  lq.hviolin(
+    (15, 18, 16, 14, 18, 23, 20, 21, 17, 21),
+    (11, 17, 16, 18, 22, 18, 14, 18, 17),
+    (5, 4.5, 6.1, 5.4, 4, 5, 5.8, 4.6, 6),
+    (4, 5, 4.9, 7.7, 4.6, 4.4, 9, 4.5, 5.3, 5.5),
+    y: (4, 3, 2, 1),
+    extrema: false,
+    boxplot: none,
+    trim: false,
+  ),
+  title: [Insel-Beispiel (Generationsbereich: $2000^2$m)],
+  xlabel: [Neuberechnungszeit (ms)],
+  ylabel: [Geänderte Knoten],
+  yaxis: (
+    ticks: range(1, 5).zip(([D], [C], [B], [A])),
+    subticks: none,
+  ),
+  width: 100%,
+  height: 100%
+)
+
+#place(right + bottom, dy: -2.5cm, box(
+  fill: white,
+  stroke: black,
+  {
+    image("./assets/full_graph.png", width: 50%)
+    place_marker(dy: 2.3cm, dx: 0.3cm, [A])
+    place_marker(dy: 0.6cm, dx: 5.3cm, [B])
+    place_marker(dy: 2.6cm, dx: 4.7cm, [C])
+    place_marker(dy: 0.6cm, dx: 12cm, [D])
+  }))
+
+#lq.diagram(
+  lq.hviolin(
+    (547, 541, 580, 543, 470, 569, 496, 523),
+    (535, 527, 518, 544, 553, 512, 562, 470),
+    (239, 243, 235, 228, 229, 232, 223, 221, 227, 234),
+    (223, 227, 228, 224, 224, 224, 229, 237, 221),
+    y: (4, 3, 2, 1),
+    extrema: false,
+    boxplot: none,
+    trim: false,
+  ),
+  title: [Insel-Beispiel (Generationsbereich: $20000^2$m)],
+  xlabel: [Neuberechnungszeit (ms)],
+  ylabel: [Geänderter Knoten],
+  yaxis: (
+    ticks: range(1, 5).zip(([D], [C], [B], [A])),
+    subticks: none,
+  ),
+  width: 100%,
+  height: 100%
+)
+
+#place(right + bottom, dx: 0.3cm, dy: -2.5cm, box(
+  fill: white,
+  stroke: black,
+  {
+    image("./assets/full_graph.png", width: 50%)
+    place_marker(dy: 2.3cm, dx: 0.3cm, [A])
+    place_marker(dy: 0.6cm, dx: 5.3cm, [B])
+    place_marker(dy: 2.6cm, dx: 4.7cm, [C])
+    place_marker(dy: 0.6cm, dx: 12cm, [D])
+  }))
+
 
 == Overhead
 
@@ -209,6 +330,9 @@ let values: Vec<TemplateValue>
   ),
   title: [Höhlen-Beispiel (Kreuzungen: $500$)],
   xlabel: [Berechnungszeit (ms)],
+  xaxis: (
+    exponent: none,
+  ),
   yaxis: (
     ticks: range(1, 4).zip(([direkt implementiert], [ohne Generator], [mein System])),
     subticks: none,
@@ -229,6 +353,9 @@ let values: Vec<TemplateValue>
   ),
   title: [Insel-Beispiel (Bereich: $20000^2$m)],
   xlabel: [Berechnungszeit (ms)],
+  xaxis: (
+    exponent: none,
+  ),
   yaxis: (
     ticks: range(1, 4).zip(([direkt implementiert], [ohne Generator], [mein System])),
     subticks: none,
@@ -237,13 +364,22 @@ let values: Vec<TemplateValue>
   height: 100%
 )
 
-= Vorteile 
+== Future Work
 
-= Nachteile
+
 
 = Mögliche Fragen
+
+== Vorteile
+
+- vereinfachte Abstraktionsebene für nicht Programmierer
+- schnellere Neugenerien bei großen Welten
 
 == KI
 
 == Output Datenstruktur
 
+
+== Bilder Quellen
+
+- Minecraft: eigener Screenshot
