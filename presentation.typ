@@ -6,6 +6,7 @@
 #import "@preview/theorion:0.6.0": *
 #import cosmos.clouds: *
 #import "@preview/lilaq:0.6.0" as lq
+#import "layout/trimmed_image.typ": *
 #show: show-theorion
 
 // cetz and fletcher bindings for touying
@@ -47,7 +48,7 @@
 #title-slide()
 
 
-= Kern Idee
+= Fragestellung
 
 #figure(
   image("assets/minecraft.jpg", width: 80%),
@@ -73,9 +74,35 @@ die nicht mehr valide sind.
 
 = Related Work
 
-= Was ich gebaut habe 
+== Prozedurale Generierung
 
-- Bild vom Programm mit Bestanteilen erklärt
+#place(
+  center + top, dx: 3cm,
+  image("assets/layered_noise_2.png", width: 60%),
+)
+
+#place(
+  left + bottom, dx: 1cm,
+  image("assets/l_system_trees.png", width: 50%),
+)
+
+#place(right + top, dx: -3cm, dy: 4cm, [Layered Noise])
+#place(left + top, dx: 6cm, dy: 4cm, [L-Systems])
+
+== Houdini & Blender 
+
+#place(
+  right + bottom,
+  box(width: 60%, trimmed-image("../assets/blender.webp", trim: (right: 19%)))
+)
+
+#place(
+  left + top,
+  image("assets/houdini.jpg", width: 60%),
+)
+
+= Mein Lösungsansatz 
+
 
 #speaker-note[
 - Kurzes Video 
@@ -114,6 +141,8 @@ die nicht mehr valide sind.
   image("assets/template_changed.svg", width: 75%),
 )
 
+== Laufzeit-Unterscheid
+
 == Abhängigkeits-Werte finden 
 
 #v(1cm)
@@ -121,122 +150,6 @@ die nicht mehr valide sind.
 #figure(
   image("assets/relative_schritte.svg", width: 100%),
 ) 
-
-== Graphen im Speicher Darstellen 
-
-#cols(lazy-layout: true)[
-```rust
-
-enum TemplateValue {
-    Number(NumberValue),
-    Position(PositionValue),
-    Volume(VolumeValue),
-...
-```
-][
-```rust
-
-enum PositionValue {
-  Add((PosIndex, PosIndex)),
-  Sub((PosIndex, PosIndex)),
-  Numbers([NumberIndex; 3]),
-...
-```]
-
-#v(1cm)
-
-```rust
-let values: Vec<TemplateValue>
-```
-#cetz-canvas({
-  import cetz.draw: *
-
-  let items = (
-    (orange, 1),   (orange, 0.5), (orange, 0.2), (orange, 0.8),
-    (orange, 0.3), (orange, 0.9), (orange, 0.4), (orange, 0.3)
-  )
-  
-  for (i, (fill, full)) in items.enumerate() { 
-    let w = 3
-    let h = 2
-    let x = i * w
-    let inset = 0.5
-    fill = fill.desaturate(60%)
-
-    group(name: "block-" + str(i), {
-      rect((x, 0), (x + inset, h), fill: fill, stroke: 0.8pt)
-      rect((x + inset, 0), (x + inset * 2, h), fill: fill, stroke: 0.8pt)
-
-      let y = x + inset * 2 
-      rect((y, 0), (y + (w - inset * 2) * full, h), fill: fill, stroke: none)
-      rect((x, 0), (x + w, h), stroke: 2pt)
-    })  
-  }
-
-  let connect-blocks(from-idx, to-idx, label: none, offset: 0.6) = {
-    let start-node = "block-" + str(from-idx) + ".south"
-    let end-node = "block-" + str(to-idx) + ".south"
-
-    line(
-      start-node,
-      (rel: (0, -offset), to: start-node),
-      (rel: (0, -offset), to: end-node),
-      end-node,
-      mark: (end: ">", fill: black),
-      stroke: 1.5pt
-    )
-  }
-
-  connect-blocks(0, 2, offset: 1.5)
-  connect-blocks(3, 1, offset: 1)
-  connect-blocks(7, 4, offset: 1.5)
-  connect-blocks(5, 6, offset: 1)
-})
-
-
-#speaker-note[
-- Listen an typed union (enum mit daten)
-- Jede union nutzt so viel speicher wie die größte variation benötigt. 
-- Gute cache Lokalität gegen heap Alloctions und pointer
-]
-
-== Template bauen
-
-```rust
-fn make_position(child_node: &EditorNode, 
-                 in_index: usize) -> PosIndex {
-
-let node = child_node.inputs[in_index];
-let value = match &node.data_type {
-  EditorNodeType::Add => {
-    let a = make_position(node, 0, ...);
-    let b = make_position(node, 1, ...);
-    
-    TemplateValue::Position(PositionValue::Add((a, b)))
-  }, 
-  EditorNodeType::Sub => ...
-}
-
-
-```
-
-== Template errechnen
-
-#v(1cm)
-```rust
-fn calc_position(index: PosIndex) -> SmallVec<Vec3> {
-  
-  match values[index] {
-    PositionValue::Add((a_index, b_index)) => {
-      let a = calc_position(a_index);
-      let b = calc_position(b_index);
-
-      return a.cartesian_product(b)
-               .map(|(a_v, b_v)| a_v + b_v);
-    },
-    PositionValue::Sub => ...
-}
-```
 
 == Neuberechnungszeit
 
@@ -368,14 +281,123 @@ fn calc_position(index: PosIndex) -> SmallVec<Vec3> {
 
 
 
-= Mögliche Fragen
+= Offene Fragen?
 
-== Vorteile
+== Graphen im Speicher Darstellen 
 
-- vereinfachte Abstraktionsebene für nicht Programmierer
-- schnellere Neugenerien bei großen Welten
+#cols(lazy-layout: true)[
+```rust
 
-== KI
+enum TemplateValue {
+    Number(NumberValue),
+    Position(PositionValue),
+    Volume(VolumeValue),
+...
+```
+][
+```rust
+
+enum PositionValue {
+  Add((PosIndex, PosIndex)),
+  Sub((PosIndex, PosIndex)),
+  Numbers([NumberIndex; 3]),
+...
+```]
+
+#v(1cm)
+
+```rust
+let values: Vec<TemplateValue>
+```
+#cetz-canvas({
+  import cetz.draw: *
+
+  let items = (
+    (orange, 1),   (orange, 0.5), (orange, 0.2), (orange, 0.8),
+    (orange, 0.3), (orange, 0.9), (orange, 0.4), (orange, 0.3)
+  )
+  
+  for (i, (fill, full)) in items.enumerate() { 
+    let w = 3
+    let h = 2
+    let x = i * w
+    let inset = 0.5
+    fill = fill.desaturate(60%)
+
+    group(name: "block-" + str(i), {
+      rect((x, 0), (x + inset, h), fill: fill, stroke: 0.8pt)
+      rect((x + inset, 0), (x + inset * 2, h), fill: fill, stroke: 0.8pt)
+
+      let y = x + inset * 2 
+      rect((y, 0), (y + (w - inset * 2) * full, h), fill: fill, stroke: none)
+      rect((x, 0), (x + w, h), stroke: 2pt)
+    })  
+  }
+
+  let connect-blocks(from-idx, to-idx, label: none, offset: 0.6) = {
+    let start-node = "block-" + str(from-idx) + ".south"
+    let end-node = "block-" + str(to-idx) + ".south"
+
+    line(
+      start-node,
+      (rel: (0, -offset), to: start-node),
+      (rel: (0, -offset), to: end-node),
+      end-node,
+      mark: (end: ">", fill: black),
+      stroke: 1.5pt
+    )
+  }
+
+  connect-blocks(0, 2, offset: 1.5)
+  connect-blocks(3, 1, offset: 1)
+  connect-blocks(7, 4, offset: 1.5)
+  connect-blocks(5, 6, offset: 1)
+})
+
+
+#speaker-note[
+- Listen an typed union (enum mit daten)
+- Jede union nutzt so viel speicher wie die größte variation benötigt. 
+- Gute cache Lokalität gegen heap Alloctions und pointer
+]
+
+== Template bauen
+
+```rust
+fn make_position(child_node: &EditorNode, 
+                 in_index: usize) -> PosIndex {
+
+let node = child_node.inputs[in_index];
+let value = match &node.data_type {
+  EditorNodeType::Add => {
+    let a = make_position(node, 0, ...);
+    let b = make_position(node, 1, ...);
+    
+    TemplateValue::Position(PositionValue::Add((a, b)))
+  }, 
+  EditorNodeType::Sub => ...
+}
+
+
+```
+
+== Template errechnen
+
+#v(1cm)
+```rust
+fn calc_position(index: PosIndex) -> SmallVec<Vec3> {
+  
+  match values[index] {
+    PositionValue::Add((a_index, b_index)) => {
+      let a = calc_position(a_index);
+      let b = calc_position(b_index);
+
+      return a.cartesian_product(b)
+               .map(|(a_v, b_v)| a_v + b_v);
+    },
+    PositionValue::Sub => ...
+}
+```
 
 == Output Datenstruktur
 
@@ -383,3 +405,6 @@ fn calc_position(index: PosIndex) -> SmallVec<Vec3> {
 == Bilder Quellen
 
 - Minecraft: eigener Screenshot
+- Layered Noise: https://velog.velcdn.com/images/suhan0304/post/5decd2a9-bbfa-43fc-9cb1-b17b6c4944e5/image.png
+- Blender: https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Fneed-some-clouds-geometry-nodes-v0-vt96ocz4z7w91.jpg%3Fauto%3Dwebp%26s%3D5eb3063e5dfc3694d7b99f80a96bdbfc42583c8c
+- Houdini: https://i.pinimg.com/originals/45/8c/29/458c298b4ee094cf161f8e32f88d5505.jpg
