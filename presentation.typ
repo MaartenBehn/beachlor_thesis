@@ -27,10 +27,10 @@
     //show-notes-on-second-screen: right,
   ),   
   config-info(
-    title: [Bachlorarbeit],
+    title: [Bachelorarbeit],
     subtitle: [Minimale Neuberechnung Abhängigkeits-Graph basierter Regeln zur prozeduralen Welten-Generation],
     author: [Maarten Behn],
-    date: [ 08.09.2026],
+    date: [ 8.9.2026],
     institution: [CGVR Universität Bremen],
     logo: image("./layout/UHB_Logo_4c.svg", height: 18.5mm),
   ),
@@ -59,7 +59,7 @@
 
 #place(left + top, dy: 1cm, [Generierte Welt])
 
-#place(right + horizon, dy: -4cm, dx: -1cm, [Generations Schritte])
+#place(right + horizon, dy: -4cm, dx: -1cm, [Generationsschritte])
 
 #place(
   right + horizon,
@@ -169,9 +169,9 @@ die nicht mehr valide sind.
 
 #place(top + right, dy: 3cm, dx: 0cm, 
   align(left)[
-  Cache Fraktor: $c_f := a/c$ \
-  Branch Fraktor: $b_f$ \
-  Neuberechnungs Faktor: $g_f$
+  Cache-Fraktor: $c_f := a/c$ \
+  Branch-Fraktor: $b_f$ \
+  Neuberechnungsfaktor: $g_f$
   ])
 
 #place(bottom + center, dy: -3cm, dx: 2cm, $O(n) = O((g_f c_f a)^(b_f)) = O(a^(b_f))$) 
@@ -191,8 +191,8 @@ die nicht mehr valide sind.
 
 #place(image("assets/full.png", width: 80%))
 #place(right + bottom, image("assets/cave.png", width: 70%))
-#place(top + right, dy: 2cm, dx: 0cm, [Insel Beispiel]) 
-#place(bottom + left, dy: -2cm, dx: 1cm, [Höhlen Beispiel]) 
+#place(top + right, dy: 2cm, dx: 0cm, [Insel-Beispiel]) 
+#place(bottom + left, dy: -2cm, dx: 1cm, [Höhlen-Beispiel]) 
 
 == Neuberechnungszeit
 
@@ -327,22 +327,22 @@ die nicht mehr valide sind.
 - Skalierung von sehr große Welten 
 #v(0.5cm)
 
-- Intigration in bestehende Game Engines 
+- Integration in bestehende Game Engines 
 #v(0.5cm)
 - Parallelisierung der Generierung
 #v(0.5cm)
 - Automatische Cache-Optimierung
 #v(0.5cm)
-- Kreis Abhängigkeiten & Leere Lösungen
+- Kreis-Abhängigkeiten & Leere Lösungen
 #v(0.5cm)
-- Experten Meinungen zur Bewertung der Nützlichkeit
+- Experten-Meinungen zur Bewertung der Nützlichkeit
 
 = Beispiel Videos
 
-= Vielen Dank \ Offene Fragen?
+= Vielen Dank. \ Offene Fragen?
 
 
-== Graphen im Speicher Darstellen 
+== Graphen im Speicher darstellen 
 
 #cols(lazy-layout: true)[
 ```rust
@@ -458,15 +458,13 @@ fn calc_position(index: PosIndex) -> SmallVec<Vec3> {
 }
 ```
 
-== Bilder Quellen
+== Bilder-Quellen
 
 - Minecraft: #text(size: 0.7em, [eigener Screenshot])
 - Layered Noise: #text(size: 0.7em, [https://velog.velcdn.com/images/suhan0304/post/5decd2a9-bbfa-43fc-9cb1-b17b6c4944e5/image.png])
 - Blender: #text(size: 0.7em, [https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Fneed-some-clouds-geometry-nodes-v0-vt96ocz4z7w91.jpg%3Fauto%3Dwebp%26s%3D5eb3063e5dfc3694d7b99f80a96bdbfc42583c8c])
 - Houdini: #text(size: 0.7em, [https://i.pinimg.com/originals/45/8c/29/458c298b4ee094cf161f8e32f88d5505.jpg])
 - Tarrain diffusion: #text(size: 0.7em, [https://github.com/xandergos/terrain-diffusion])
-Zugegriffen am: 07.09.2026 19:00
-
-
+Zugegriffen am: 7.9.2026 19 Uhr
 
 
