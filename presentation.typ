@@ -24,10 +24,10 @@
   config-common(
     frozen-counters: (theorem-counter,),
     new-section-slide-fn: new-section-slide.with(numbered: false),
-    show-notes-on-second-screen: right,
+    //show-notes-on-second-screen: right,
   ),   
   config-info(
-    title: [Beachlorarbeit],
+    title: [Bachlorarbeit],
     subtitle: [Minimale Neuberechnung Abhängigkeits-Graph basierter Regeln zur prozeduralen Welten-Generation],
     author: [Maarten Behn],
     date: [ 08.09.2026],
@@ -50,8 +50,21 @@
 
 = Fragestellung
 
-#figure(
-  image("assets/minecraft.jpg", width: 80%),
+== Fragestellung
+
+#place(
+  left + horizon,
+  image("assets/minecraft.jpg", width: 60%),
+)
+
+#place(left + top, dy: 1cm, [Generierte Welt])
+
+#place(right + horizon, dy: -4cm, dx: -1cm, [Generations Schritte])
+
+#place(
+  right + horizon,
+  dy: 2cm, dx: -2cm,
+  image("assets/generations_schritte.svg", width: 25%),
 )
 
 #speaker-note[
@@ -86,8 +99,14 @@ die nicht mehr valide sind.
   image("assets/l_system_trees.png", width: 50%),
 )
 
-#place(right + top, dx: -3cm, dy: 4cm, [Layered Noise])
+#place(
+  right + bottom,
+  box(width: 40%, trimmed-image("../assets/tarrain_diffusion.jpeg", trim: (left: 50%)))
+)
+
+#place(right + top, dx: -3cm, dy: 3.5cm, [Layered Noise])
 #place(left + top, dx: 6cm, dy: 4cm, [L-Systems])
+#place(right + bottom, dx: -2cm, dy: -6cm, [Tarrain Diffusion])
 
 == Houdini & Blender 
 
@@ -143,13 +162,37 @@ die nicht mehr valide sind.
 
 == Laufzeit-Unterscheid
 
+#place(
+  top + left,
+  image("assets/laufzeit.svg", width: 60%),
+)
+
+#place(top + right, dy: 3cm, dx: 0cm, 
+  align(left)[
+  Cache Fraktor: $c_f := a/c$ \
+  Branch Fraktor: $b_f$ \
+  Neuberechnungs Faktor: $g_f$
+  ])
+
+#place(bottom + center, dy: -3cm, dx: 2cm, $O(n) = O((g_f c_f a)^(b_f)) = O(a^(b_f))$) 
+
+
 == Abhängigkeits-Werte finden 
 
 #v(1cm)
 
 #figure(
   image("assets/relative_schritte.svg", width: 100%),
-) 
+)
+
+= Analyse
+
+== Beispiele 
+
+#place(image("assets/full.png", width: 80%))
+#place(right + bottom, image("assets/cave.png", width: 70%))
+#place(top + right, dy: 2cm, dx: 0cm, [Insel Beispiel]) 
+#place(bottom + left, dy: -2cm, dx: 1cm, [Höhlen Beispiel]) 
 
 == Neuberechnungszeit
 
@@ -241,7 +284,7 @@ die nicht mehr valide sind.
     boxplot: none,
     trim: false,
   ),
-  title: [Höhlen-Beispiel (Kreuzungen: $500$)],
+  title: [Höhlen-Beispiel],
   xlabel: [Berechnungszeit (ms)],
   xaxis: (
     exponent: none,
@@ -264,7 +307,7 @@ die nicht mehr valide sind.
     boxplot: none,
     trim: false,
   ),
-  title: [Insel-Beispiel (Bereich: $20000^2$m)],
+  title: [Insel-Beispiel],
   xlabel: [Berechnungszeit (ms)],
   xaxis: (
     exponent: none,
@@ -279,9 +322,25 @@ die nicht mehr valide sind.
 
 == Future Work
 
+#v(1cm)
 
+- Skalierung von sehr große Welten 
+#v(0.5cm)
 
-= Offene Fragen?
+- Intigration in bestehende Game Engines 
+#v(0.5cm)
+- Parallelisierung der Generierung
+#v(0.5cm)
+- Automatische Cache-Optimierung
+#v(0.5cm)
+- Kreis Abhängigkeiten & Leere Lösungen
+#v(0.5cm)
+- Experten Meinungen zur Bewertung der Nützlichkeit
+
+= Beispiel Videos
+
+= Vielen Dank \ Offene Fragen?
+
 
 == Graphen im Speicher Darstellen 
 
@@ -399,12 +458,15 @@ fn calc_position(index: PosIndex) -> SmallVec<Vec3> {
 }
 ```
 
-== Output Datenstruktur
-
-
 == Bilder Quellen
 
-- Minecraft: eigener Screenshot
-- Layered Noise: https://velog.velcdn.com/images/suhan0304/post/5decd2a9-bbfa-43fc-9cb1-b17b6c4944e5/image.png
-- Blender: https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Fneed-some-clouds-geometry-nodes-v0-vt96ocz4z7w91.jpg%3Fauto%3Dwebp%26s%3D5eb3063e5dfc3694d7b99f80a96bdbfc42583c8c
-- Houdini: https://i.pinimg.com/originals/45/8c/29/458c298b4ee094cf161f8e32f88d5505.jpg
+- Minecraft: #text(size: 0.7em, [eigener Screenshot])
+- Layered Noise: #text(size: 0.7em, [https://velog.velcdn.com/images/suhan0304/post/5decd2a9-bbfa-43fc-9cb1-b17b6c4944e5/image.png])
+- Blender: #text(size: 0.7em, [https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Fneed-some-clouds-geometry-nodes-v0-vt96ocz4z7w91.jpg%3Fauto%3Dwebp%26s%3D5eb3063e5dfc3694d7b99f80a96bdbfc42583c8c])
+- Houdini: #text(size: 0.7em, [https://i.pinimg.com/originals/45/8c/29/458c298b4ee094cf161f8e32f88d5505.jpg])
+- Tarrain diffusion: #text(size: 0.7em, [https://github.com/xandergos/terrain-diffusion])
+Zugegriffen am: 07.09.2026 19:00
+
+
+
+
