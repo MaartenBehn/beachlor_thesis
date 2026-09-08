@@ -157,7 +157,7 @@ die nicht mehr valide sind.
 == Templates vergleichen
 
 #figure(
-  image("assets/template_changed.svg", width: 75%),
+  image("assets/template_changed.svg", width: 70%),
 )
 
 == Laufzeit-Unterscheid
@@ -339,7 +339,9 @@ die nicht mehr valide sind.
 
 = Beispiel Videos
 
-= Vielen Dank. \ Offene Fragen?
+= Vielen Dank. \ Fragen?
+
+#show: appendix
 
 
 == Graphen im Speicher darstellen 
